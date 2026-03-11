@@ -1,0 +1,7 @@
+{
+  "name": "readline-trainer",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "bun run --watch server.ts"
+  }
+}

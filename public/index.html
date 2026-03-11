@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Readline Trainer</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Readline Trainer</h1>
+      <div id="session-info" class="hidden">
+        <span id="progress">0/20</span>
+        <span id="accuracy">0%</span>
+      </div>
+    </header>
+
+    <main>
+      <!-- Start screen -->
+      <div id="start-screen">
+        <p>Practice readline shortcuts with spaced repetition.</p>
+        <p class="hint">Use Ctrl, not Cmd.</p>
+        <button id="start-btn" onclick="startSession()">Start Session</button>
+        <button onclick="showTutorial()">Tutorial</button>
+      </div>
+
+      <!-- Tutorial screen -->
+      <div id="tutorial-screen" class="hidden">
+        <h2>Shortcuts Reference</h2>
+        <h3>Movement</h3>
+        <table class="tutorial-table">
+          <tr><td class="combo">Ctrl-B</td><td>Back one char</td></tr>
+          <tr><td class="combo">Ctrl-F</td><td>Forward one char</td></tr>
+          <tr><td class="combo">Alt-B</td><td>Back one word</td></tr>
+          <tr><td class="combo">Alt-F</td><td>Forward one word</td></tr>
+          <tr><td class="combo">Ctrl-A</td><td>Start of line</td></tr>
+          <tr><td class="combo">Ctrl-E</td><td>End of line</td></tr>
+        </table>
+        <h3>Deletion</h3>
+        <table class="tutorial-table">
+          <tr><td class="combo">Ctrl-D</td><td>Delete char forward</td></tr>
+          <tr><td class="combo">Ctrl-H</td><td>Delete char backward</td></tr>
+          <tr><td class="combo">Alt-D</td><td>Delete word forward</td></tr>
+          <tr><td class="combo">Ctrl-W</td><td>Delete word backward</td></tr>
+          <tr><td class="combo">Ctrl-K</td><td>Kill to end of line</td></tr>
+          <tr><td class="combo">Ctrl-U</td><td>Kill to start of line</td></tr>
+        </table>
+        <h3>Try it</h3>
+        <p class="hint">Type below and use shortcuts to edit. Ctrl-W won't work here (closes tab).</p>
+        <div id="sandbox">
+          <div class="terminal-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">sandbox</span>
+          </div>
+          <div class="sandbox-body">
+            <span class="prompt-char">$ </span><input id="sandbox-input" type="text" value="git commit -m 'hello world'" spellcheck="false" autocomplete="off">
+          </div>
+        </div>
+        <div id="sandbox-status"></div>
+        <button onclick="hideTutorial()">Back</button>
+      </div>
+
+      <!-- Quiz screen -->
+      <div id="quiz-screen" class="hidden">
+        <div id="prompt-text"></div>
+
+        <div id="terminal">
+          <div class="terminal-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">bash</span>
+          </div>
+          <div class="terminal-body">
+            <span class="prompt-char">$ </span><span id="terminal-line"></span>
+          </div>
+        </div>
+
+        <div id="feedback" class="hidden"></div>
+
+        <!-- Multiple choice fallback -->
+        <div id="choices" class="hidden"></div>
+
+        <div id="hint-area">
+          <span id="category-badge"></span>
+          <span id="shortcut-hint" class="hidden"></span>
+        </div>
+
+        <div id="next-prompt" class="hidden" onclick="advanceToNext()">Press Enter or click to continue</div>
+      </div>
+
+      <!-- Session end screen -->
+      <div id="end-screen" class="hidden">
+        <h2>Session Complete</h2>
+        <div id="summary"></div>
+        <div id="stats-grid"></div>
+        <button onclick="startSession()">New Session</button>
+      </div>
+    </main>
+
+    <footer>
+      <button id="end-session-btn" class="hidden" onclick="endSessionEarly()">End Session</button>
+    </footer>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
