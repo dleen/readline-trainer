@@ -86,6 +86,7 @@ async function nextCard() {
 
   currentCard = data;
   waiting = false;
+  console.log("[next] card:", data.shortcutId, data.keyCombo, { needsFallback: data.needsFallback, before: data.before });
 
   // Display
   promptText.textContent = data.prompt;
@@ -202,30 +203,38 @@ document.addEventListener(
       advanceToNext();
       return;
     }
-    if (!currentCard || waiting) return;
+    if (!currentCard || waiting) {
+      console.log("[keydown] ignored: no card or waiting", { currentCard: !!currentCard, waiting, waitingForNext });
+      return;
+    }
     // Ignore modifier-only keypresses (Ctrl, Alt, Shift, Meta by themselves)
     if (["Control", "Alt", "Shift", "Meta"].includes(e.key)) return;
     // Only capture Ctrl/Alt combos
-    if (!e.ctrlKey && !e.altKey) return;
-    // If this card uses fallback (multiple choice), ignore keyboard
-    if (currentCard.needsFallback) return;
+    if (!e.ctrlKey && !e.altKey) {
+      console.log("[keydown] ignored: no modifier", { key: e.key, code: e.code });
+      return;
+    }
+
+    const ctrlKey = e.ctrlKey && !e.metaKey;
+    const altKey = e.altKey;
+    const code = e.code;
+    const expectedId = currentCard.shortcutId;
+
+    console.log("[keydown] captured", { ctrlKey, altKey, code, expectedId, needsFallback: currentCard.needsFallback });
 
     e.preventDefault();
     e.stopPropagation();
 
-    // Match against expected shortcut
-    const match =
-      e.ctrlKey === (currentCard.choices.length > 0 ? false : true) || true; // just check directly
-    const expectedId = currentCard.shortcutId;
+    // For fallback cards (Ctrl-W), keyboard presses are always wrong
+    // (the correct answer must be clicked via multiple choice)
+    if (currentCard.needsFallback) {
+      console.log("[keydown] fallback card — treating keyboard press as wrong");
+      handleAnswer(false, { ctrlKey, altKey, code });
+      return;
+    }
 
-    // Find which shortcut was pressed
-    const ctrlKey = e.ctrlKey && !e.metaKey;
-    const altKey = e.altKey;
-    const code = e.code;
-
-    // Check if the pressed combo matches the expected shortcut
-    // The expected shortcut's match info is encoded in the choices
     const pressedMatchesExpected = checkMatch(ctrlKey, altKey, code, expectedId);
+    console.log("[keydown] match result:", pressedMatchesExpected);
 
     handleAnswer(pressedMatchesExpected, { ctrlKey, altKey, code });
   },
