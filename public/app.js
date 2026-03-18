@@ -225,11 +225,12 @@ document.addEventListener(
     e.preventDefault();
     e.stopPropagation();
 
-    // For fallback cards (Ctrl-W), keyboard presses are always wrong
-    // (the correct answer must be clicked via multiple choice)
+    // For fallback cards (Ctrl-W), still check if the pressed keys match.
+    // preventDefault() stops the browser action, so accept correct presses.
     if (currentCard.needsFallback) {
-      console.log("[keydown] fallback card — treating keyboard press as wrong");
-      handleAnswer(false, { ctrlKey, altKey, code });
+      const pressedMatchesFallback = checkMatch(ctrlKey, altKey, code, currentCard.shortcutId);
+      console.log("[keydown] fallback card — match:", pressedMatchesFallback);
+      handleAnswer(pressedMatchesFallback, { ctrlKey, altKey, code });
       return;
     }
 
